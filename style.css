@@ -1719,13 +1719,6 @@ body::after { right: 56px; }
   box-shadow: none;
 }
 
-.section-header h2::after,
-.event-card h2::after {
-  content: " ✦";
-  color: rgba(185,148,83,.65);
-  font-size: .5em;
-  vertical-align: middle;
-}
 
 @media (max-width: 1080px) {
   body::before,
