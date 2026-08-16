@@ -10,16 +10,16 @@ function launchOpeningAnimation() {
   const startSequence = () => {
     window.setTimeout(() => {
       document.body.classList.add("opening-started");
-    }, 180);
+    }, 650);
 
     window.setTimeout(() => {
       document.body.classList.add("opening-finished");
       document.body.classList.remove("is-preloading");
-    }, 1400);
+    }, 2750);
 
     window.setTimeout(() => {
       openingScreen.remove();
-    }, 1950);
+    }, 3300);
   };
 
   if (document.readyState === "complete") {
@@ -127,8 +127,8 @@ if ("IntersectionObserver" in window) {
 // RSVP WhatsApp uniquement.
 // Remplace simplement les deux numéros ci-dessous par les bons numéros, sans + ni espaces.
 const WHATSAPP_CONTACTS = {
-  maurice: { name: "Maurice", phone: "33600000000" },
-  vanessa: { name: "Vanessa", phone: "33600000001" },
+  maurice: { name: "Maurice", phone: "3364787026" },
+  vanessa: { name: "Vanessa", phone: "33626608144" },
 };
 
 const rsvpForm = document.getElementById("rsvpForm");
@@ -269,8 +269,13 @@ if (backgroundMusic) {
   backgroundMusic.volume = 0.32;
   setMusicUi(!backgroundMusic.paused);
 
-  // Première tentative automatique.
+  // Tentative immédiate : la musique doit démarrer pendant l’animation d’ouverture.
   tryPlayBackgroundMusic();
+
+  // Deuxième tentative dès que le fichier audio est suffisamment chargé.
+  backgroundMusic.addEventListener("canplay", () => {
+    if (backgroundMusic.paused) tryPlayBackgroundMusic();
+  }, { once: true });
 
   // Si le navigateur bloque l'autoplay avec son, le premier geste utilisateur lance la musique.
   const unlockMusic = async (event) => {

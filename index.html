@@ -16,6 +16,10 @@
 </head>
 
 <body class="is-preloading">
+  <audio id="backgroundMusic" loop preload="auto" autoplay playsinline>
+    <source src="audio/background-music.mp3" type="audio/mpeg" />
+  </audio>
+
   <div class="opening-screen" id="openingScreen" aria-hidden="true">
     <div class="opening-glow"></div>
     <div class="opening-centerpiece">
@@ -167,6 +171,7 @@
           </div>
         </div>
         <p class="event-note">Nous serons très heureux de vous retrouver pour entourer Samuel et partager ensemble cette belle matinée.</p>
+        <p class="brunch-highlight">L’office sera suivi d’un brunch festif.</p>
       </div>
     </section>
 
@@ -253,7 +258,7 @@
                 <span class="contact-avatar">M</span>
                 <span class="contact-text">
                   <strong>Répondre à Maurice</strong>
-                  <small></small>
+                  <small>Contact WhatsApp principal</small>
                 </span>
                 <span class="contact-check" aria-hidden="true">✓</span>
               </span>
@@ -265,7 +270,7 @@
                 <span class="contact-avatar">V</span>
                 <span class="contact-text">
                   <strong>Répondre à Vanessa</strong>
-                  <small></small>
+                  <small>Autre contact WhatsApp</small>
                 </span>
                 <span class="contact-check" aria-hidden="true">✓</span>
               </span>
@@ -330,10 +335,6 @@
     <p class="made-by">Made by <a href="https://iado.io" target="_blank" rel="noopener">IADO.IO</a></p>
     <a href="#top" class="back-to-top">Retour en haut ↑</a>
   </footer>
-
-  <audio id="backgroundMusic" loop preload="none" autoplay>
-    <source src="audio/background-music.mp3" type="audio/mpeg" />
-  </audio>
 
   <button class="music-toggle" id="musicToggle" type="button" aria-label="Couper la musique" aria-pressed="true">
     <span class="music-icon" aria-hidden="true">♪</span>
