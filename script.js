@@ -128,7 +128,7 @@ if ("IntersectionObserver" in window) {
 // Remplace simplement les deux numéros ci-dessous par les bons numéros, sans + ni espaces.
 const WHATSAPP_CONTACTS = {
   maurice: { name: "Maurice", phone: "33664787026" },
-  vanessa: { name: "Vanessa", phone: "33626608144" },
+  vanessa: { name: "Vanessa", phone: "33626068144" },
 };
 
 const rsvpForm = document.getElementById("rsvpForm");
