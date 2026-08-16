@@ -19,7 +19,7 @@ function launchOpeningAnimation() {
 
     window.setTimeout(() => {
       openingScreen.remove();
-    }, 3300);
+    }, 2500);
   };
 
   if (document.readyState === "complete") {
@@ -127,7 +127,7 @@ if ("IntersectionObserver" in window) {
 // RSVP WhatsApp uniquement.
 // Remplace simplement les deux numéros ci-dessous par les bons numéros, sans + ni espaces.
 const WHATSAPP_CONTACTS = {
-  maurice: { name: "Maurice", phone: "3364787026" },
+  maurice: { name: "Maurice", phone: "33664787026" },
   vanessa: { name: "Vanessa", phone: "33626608144" },
 };
 
