@@ -1,0 +1,9 @@
+{
+  "name": "bm-samuel-choukroun",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site Bar Mitzvah Samuel Choukroun avec RSVP Vercel + Firestore",
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

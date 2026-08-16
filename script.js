@@ -124,8 +124,8 @@ if ("IntersectionObserver" in window) {
   revealElements.forEach((element) => element.classList.add("visible"));
 }
 
-// RSVP WhatsApp uniquement.
-// Remplace simplement les deux numéros ci-dessous par les bons numéros, sans + ni espaces.
+// RSVP WhatsApp + enregistrement Firebase via l'API Vercel.
+// Numéros actuels conservés depuis ta version GitHub.
 const WHATSAPP_CONTACTS = {
   maurice: { name: "Maurice", phone: "33664787026" },
   vanessa: { name: "Vanessa", phone: "33626068144" },
@@ -137,6 +137,7 @@ const submitButton = document.getElementById("submitButton");
 const selectedContactBanner = document.getElementById("selectedContactBanner");
 const contactInputs = document.querySelectorAll('input[name="contactPerson"]');
 const contactCards = document.querySelectorAll('.contact-card');
+const RSVP_QUEUE_KEY = "samuel_bm_pending_rsvps_v1";
 
 function updateContactUi() {
   const selected = document.querySelector('input[name="contactPerson"]:checked');
@@ -170,36 +171,107 @@ function updateContactUi() {
   }
 }
 
-function openWhatsAppRsvp() {
+function makeSubmissionId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID().replace(/-/g, "_");
+  }
+
+  return `rsvp_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function buildRsvpPayload() {
   const selected = document.querySelector('input[name="contactPerson"]:checked');
-  const selectedValue = selected ? selected.value : "";
-  const selectedContact = WHATSAPP_CONTACTS[selectedValue];
 
-  if (!selectedContact) return;
+  return {
+    submissionId: makeSubmissionId(),
+    firstName: document.getElementById("firstName").value.trim(),
+    lastName: document.getElementById("lastName").value.trim(),
+    attendance: document.getElementById("attendance").value,
+    guestCount: Number(document.getElementById("guestCount").value || 1),
+    message: document.getElementById("message").value.trim(),
+    contactPerson: selected ? selected.value : "",
+    website: document.getElementById("website")?.value?.trim() || "",
+    clientSubmittedAt: new Date().toISOString(),
+  };
+}
 
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const attendance = document.getElementById("attendance").value;
-  const guestCount = document.getElementById("guestCount").value;
-  const message = document.getElementById("message").value.trim();
+function getWhatsAppUrl(payload) {
+  const selectedContact = WHATSAPP_CONTACTS[payload.contactPerson];
+  if (!selectedContact) return "";
 
   const lines = [
     `Bonjour ${selectedContact.name}, voici ma réponse pour la Bar Mitzvah de Samuel Choukroun :`,
     "",
-    `Prénom : ${firstName}`,
-    `Nom : ${lastName}`,
-    `Présence : ${attendance}`,
-    `Nombre de personnes : ${guestCount}`,
+    `Prénom : ${payload.firstName}`,
+    `Nom : ${payload.lastName}`,
+    `Présence : ${payload.attendance}`,
+    `Nombre de personnes : ${payload.guestCount}`,
   ];
 
-  if (message) {
-    lines.push(`Message pour Samuel : ${message}`);
+  if (payload.message) {
+    lines.push(`Message pour Samuel : ${payload.message}`);
   }
 
   lines.push("", "Merci beaucoup.");
 
-  const whatsappUrl = `https://wa.me/${selectedContact.phone}?text=${encodeURIComponent(lines.join("\n"))}`;
-  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  return `https://wa.me/${selectedContact.phone}?text=${encodeURIComponent(lines.join("\n"))}`;
+}
+
+async function storeRsvp(payload) {
+  const response = await fetch("/api/rsvp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  });
+
+  if (!response.ok) {
+    throw new Error(`RSVP API returned ${response.status}`);
+  }
+
+  return response.json();
+}
+
+function readPendingRsvps() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(RSVP_QUEUE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writePendingRsvps(rows) {
+  try {
+    localStorage.setItem(RSVP_QUEUE_KEY, JSON.stringify(rows.slice(-20)));
+  } catch {
+    // Le mode privé peut bloquer localStorage. WhatsApp reste utilisable.
+  }
+}
+
+function queuePendingRsvp(payload) {
+  const rows = readPendingRsvps().filter((row) => row.submissionId !== payload.submissionId);
+  rows.push(payload);
+  writePendingRsvps(rows);
+}
+
+async function flushPendingRsvps() {
+  if (!navigator.onLine) return;
+
+  const rows = readPendingRsvps();
+  if (!rows.length) return;
+
+  const remaining = [];
+
+  for (const payload of rows) {
+    try {
+      await storeRsvp(payload);
+    } catch {
+      remaining.push(payload);
+    }
+  }
+
+  writePendingRsvps(remaining);
 }
 
 contactInputs.forEach((input) => {
@@ -207,6 +279,8 @@ contactInputs.forEach((input) => {
 });
 
 updateContactUi();
+window.addEventListener("online", flushPendingRsvps);
+window.addEventListener("load", () => window.setTimeout(flushPendingRsvps, 1800));
 
 if (rsvpForm) {
   rsvpForm.addEventListener("submit", (event) => {
@@ -221,19 +295,32 @@ if (rsvpForm) {
       return;
     }
 
-    openWhatsAppRsvp();
+    const payload = buildRsvpPayload();
+    const whatsappUrl = getWhatsAppUrl(payload);
+    const selectedContact = WHATSAPP_CONTACTS[payload.contactPerson];
 
-    if (formStatus) {
-      const selected = document.querySelector('input[name="contactPerson"]:checked');
-      const selectedContact = selected ? WHATSAPP_CONTACTS[selected.value] : null;
-      formStatus.textContent = selectedContact
-        ? `WhatsApp s’est ouvert avec votre réponse prête à être envoyée à ${selectedContact.name}.`
-        : "WhatsApp s’est ouvert avec votre réponse prête à être envoyée.";
-      formStatus.classList.remove("error");
+    // On lance l'enregistrement tout de suite, puis WhatsApp s'ouvre sans attendre.
+    storeRsvp(payload)
+      .then(() => {
+        if (formStatus) {
+          formStatus.textContent = `Réponse enregistrée. WhatsApp est prêt pour ${selectedContact.name}.`;
+          formStatus.classList.remove("error");
+        }
+      })
+      .catch(() => {
+        // Si Vercel/Firebase ou la connexion est temporairement indisponible, on garde une copie locale.
+        queuePendingRsvp(payload);
+        if (formStatus) {
+          formStatus.textContent = "WhatsApp s’est ouvert. L’enregistrement sera retenté automatiquement si nécessaire.";
+          formStatus.classList.remove("error");
+        }
+      });
+
+    if (whatsappUrl) {
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     }
   });
 }
-
 
 
 // Musique d'ambiance.

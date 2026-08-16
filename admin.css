@@ -1,0 +1,70 @@
+:root {
+  --cream: #f8f3ea;
+  --paper: #fffdf8;
+  --ink: #33291f;
+  --muted: #786b5d;
+  --gold: #b99453;
+  --gold-deep: #8a6933;
+  --olive: #596044;
+  --border: rgba(185,148,83,.18);
+  --shadow: 0 24px 70px rgba(86,63,38,.11);
+  --font-title: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Montserrat", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(223,199,149,.22), transparent 25%),
+    var(--cream);
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+.admin-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 72px; }
+.admin-header { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:36px; }
+.admin-brand { display:flex; align-items:center; gap:18px; }
+.admin-brand img { width:72px; height:72px; object-fit:cover; border-radius:20px; box-shadow:0 12px 30px rgba(138,105,51,.13); }
+.kicker { margin:0 0 4px; color:var(--gold-deep); font-size:.7rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+h1,h2 { margin:0; font-family:var(--font-title); font-weight:600; line-height:1; }
+h1 { font-size:clamp(2.4rem,5vw,4rem); }
+h2 { font-size:clamp(2rem,4vw,3rem); }
+.admin-brand p:last-child { margin:7px 0 0; color:var(--muted); }
+.back-link { color:var(--gold-deep); text-decoration:none; font-size:.8rem; font-weight:700; }
+.login-card, .dashboard { border:1px solid var(--border); border-radius:30px; background:rgba(255,253,248,.88); box-shadow:var(--shadow); }
+.login-card { max-width:760px; margin:70px auto; padding:clamp(28px,5vw,52px); }
+.login-card > div > p:last-child { color:var(--muted); }
+.login-card form { display:grid; grid-template-columns:1fr auto; gap:12px; margin-top:26px; }
+input { min-height:52px; padding:0 16px; border:1px solid rgba(94,73,54,.16); border-radius:14px; outline:none; background:#fff; }
+input:focus { border-color:var(--gold); box-shadow:0 0 0 4px rgba(185,148,83,.11); }
+button { min-height:50px; padding:0 20px; border:0; border-radius:999px; color:#fff; background:linear-gradient(135deg,#b89659,#86642f); font-weight:700; }
+button.secondary { color:var(--gold-deep); border:1px solid var(--border); background:#fffaf2; }
+.status,.dashboard-status { min-height:20px; margin:13px 0 0; color:var(--muted); font-size:.8rem; }
+.status.error,.dashboard-status.error { color:#9a493d; font-weight:700; }
+.dashboard { padding:clamp(22px,4vw,38px); }
+.toolbar { display:flex; align-items:end; justify-content:space-between; gap:20px; }
+.toolbar-actions { display:flex; gap:10px; }
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:30px 0 24px; }
+.stats-grid article { padding:20px; border:1px solid var(--border); border-radius:20px; background:rgba(248,243,234,.72); }
+.stats-grid span { display:block; color:var(--muted); font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+.stats-grid strong { display:block; margin-top:7px; color:var(--gold-deep); font-family:var(--font-title); font-size:2.5rem; font-weight:600; }
+.table-wrap { overflow:auto; border:1px solid var(--border); border-radius:20px; }
+table { width:100%; border-collapse:collapse; min-width:900px; background:#fffdf9; }
+th,td { padding:14px 16px; text-align:left; border-bottom:1px solid rgba(94,73,54,.08); vertical-align:top; }
+th { position:sticky; top:0; background:#f2e7d6; color:var(--gold-deep); font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; }
+td { font-size:.82rem; }
+.attendance-yes { color:var(--olive); font-weight:700; }
+.attendance-no { color:#9a493d; font-weight:700; }
+.empty-cell { padding:34px; text-align:center; color:var(--muted); }
+code { padding:2px 5px; border-radius:6px; background:#f0e5d4; }
+@media(max-width:760px){
+  .admin-header,.toolbar { align-items:flex-start; flex-direction:column; }
+  .admin-brand img { width:58px;height:58px; }
+  .login-card form { grid-template-columns:1fr; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .toolbar-actions { width:100%; }
+  .toolbar-actions button { flex:1; }
+}

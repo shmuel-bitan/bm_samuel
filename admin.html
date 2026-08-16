@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#f4ecdf" />
+  <title>RSVP · Samuel Choukroun</title>
+  <link rel="icon" type="image/png" href="images/logo-sc-premium.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div class="admin-brand">
+        <img src="images/logo-sc-premium.png" alt="SC" />
+        <div>
+          <p class="kicker">Administration privée</p>
+          <h1>Inscriptions RSVP</h1>
+          <p>Bar Mitzvah de Samuel Choukroun</p>
+        </div>
+      </div>
+      <a href="/" class="back-link">← Retour au site</a>
+    </header>
+
+    <section class="login-card" id="loginCard">
+      <div>
+        <p class="kicker">Accès protégé</p>
+        <h2>Entrer le code administrateur</h2>
+        <p>Le code correspond à la variable <code>ADMIN_TOKEN</code> configurée sur Vercel.</p>
+      </div>
+      <form id="adminLoginForm">
+        <input id="adminToken" type="password" autocomplete="current-password" placeholder="Code administrateur" required />
+        <button type="submit">Afficher les inscriptions</button>
+      </form>
+      <p class="status" id="loginStatus" aria-live="polite"></p>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <div class="toolbar">
+        <div>
+          <p class="kicker">Tableau de bord</p>
+          <h2>Liste des réponses</h2>
+        </div>
+        <div class="toolbar-actions">
+          <button class="secondary" id="refreshButton" type="button">Actualiser</button>
+          <button id="exportButton" type="button">Exporter CSV</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <article><span>Réponses</span><strong id="statResponses">0</strong></article>
+        <article><span>Présents</span><strong id="statPresent">0</strong></article>
+        <article><span>Absents</span><strong id="statAbsent">0</strong></article>
+        <article><span>Invités présents</span><strong id="statGuests">0</strong></article>
+      </div>
+
+      <p class="dashboard-status" id="dashboardStatus" aria-live="polite"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Nom</th>
+              <th>Présence</th>
+              <th>Personnes</th>
+              <th>Contact</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="rsvpTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>
