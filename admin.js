@@ -104,17 +104,18 @@ function exportCsv() {
   const lines = [headers.map(csvValue).join(";")];
 
   currentRows.forEach((row) => {
-    lines.push([
-      formatDate(row.createdAt || row.clientSubmittedAt),
-      row.firstName,
-      row.lastName,
-      row.attendance,
-      row.guestCount,
-      row.contactPerson,
-      row.message,
-    ].map(csvValue).join(";"));
-  });
+  const guestCountForCsv = row.attendance === "Non" ? 0 : row.guestCount;
 
+  lines.push([
+    formatDate(row.createdAt || row.clientSubmittedAt),
+    row.firstName,
+    row.lastName,
+    row.attendance,
+    guestCountForCsv,
+    row.contactPerson,
+    row.message,
+  ].map(csvValue).join(";"));
+});
   const blob = new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
