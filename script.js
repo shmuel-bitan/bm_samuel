@@ -138,7 +138,23 @@ const selectedContactBanner = document.getElementById("selectedContactBanner");
 const contactInputs = document.querySelectorAll('input[name="contactPerson"]');
 const contactCards = document.querySelectorAll('.contact-card');
 const RSVP_QUEUE_KEY = "samuel_bm_pending_rsvps_v1";
+const attendanceSelect = document.getElementById("attendance");
+const guestCountInput = document.getElementById("guestCount");
 
+function updateGuestCount() {
+  const isAbsent = attendanceSelect.value === "Non";
+
+  guestCountInput.disabled = isAbsent;
+
+  if (isAbsent) {
+    guestCountInput.value = "0";
+  } else if (Number(guestCountInput.value) < 1) {
+    guestCountInput.value = "1";
+  }
+}
+
+attendanceSelect.addEventListener("change", updateGuestCount);
+updateGuestCount();
 function updateContactUi() {
   const selected = document.querySelector('input[name="contactPerson"]:checked');
   const selectedValue = selected ? selected.value : "";
@@ -187,7 +203,10 @@ function buildRsvpPayload() {
     firstName: document.getElementById("firstName").value.trim(),
     lastName: document.getElementById("lastName").value.trim(),
     attendance: document.getElementById("attendance").value,
-    guestCount: Number(document.getElementById("guestCount").value || 1),
+    guestCount: 
+      document.getElementById("attendance").value === "Non"
+      ? 0
+      : Number(document.getElementById("guestCount").value || 1),
     message: document.getElementById("message").value.trim(),
     contactPerson: selected ? selected.value : "",
     website: document.getElementById("website")?.value?.trim() || "",

@@ -45,7 +45,8 @@ module.exports = async function handler(req, res) {
   const contactPerson = cleanText(body.contactPerson, 20).toLowerCase();
   const attendance = cleanText(body.attendance, 10);
   const message = cleanText(body.message, 1500);
-  const guestCount = Number.parseInt(body.guestCount, 10);
+  const submittedGuestCount = Number.parseInt(body.guestCount, 10);
+  const guestCount = attendance === "Non" ? 0 : submittedGuestCount;
   const clientSubmittedAt = cleanText(body.clientSubmittedAt, 80);
 
   if (!submissionId || !/^[a-zA-Z0-9_-]{8,80}$/.test(submissionId)) {
@@ -64,9 +65,12 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, error: "Invalid attendance value" });
   }
 
-  if (!Number.isInteger(guestCount) || guestCount < 1 || guestCount > 20) {
-    return res.status(400).json({ ok: false, error: "Invalid guest count" });
-  }
+  if (
+  attendance === "Oui" &&
+  (!Number.isInteger(guestCount) || guestCount < 1 || guestCount > 20)
+) {
+  return res.status(400).json({ ok: false, error: "Invalid guest count" });
+}
 
   try {
     const db = getDb();
